@@ -1,5 +1,5 @@
 import os
-from sqlalchemy import ForeignKey, Column, DateTime, Text, Boolean, Integer
+from sqlalchemy import create_engine, ForeignKey, Column, DateTime, Text, Boolean, Integer
 from sqlalchemy.orm import declarative_base, relationship
 Base = declarative_base()
 
@@ -59,3 +59,9 @@ class User(Base):
 
     def __repr__(self):
         return f"<id={self.id} username={self.username} name={self.name}>"
+
+
+def create_tables(connection_string: str):
+    # create tables
+    engine = create_engine(connection_string, echo=True)
+    Base.metadata.create_all(engine)
