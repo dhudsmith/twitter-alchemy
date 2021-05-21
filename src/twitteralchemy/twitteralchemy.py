@@ -1,6 +1,5 @@
 from sqlalchemy import create_engine
-import schemas as schemas
-import models as models
+from src.twitteralchemy.models import pydantic as schemas, orm as models
 
 
 def create_tables(connection_string: str):
