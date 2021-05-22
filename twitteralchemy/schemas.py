@@ -106,7 +106,7 @@ class User(BaseModel):
     location: Optional[str] = None
     url: Optional[str] = None
     description: Optional[str] = None
-    verified: Optional[str] = None
+    verified: Optional[bool] = None
     public_metrics: Optional[UserPublicMetrics] = UserPublicMetrics()
     pinned_tweet_id: Optional[int] = None
     profile_image_url: Optional[str] = None
