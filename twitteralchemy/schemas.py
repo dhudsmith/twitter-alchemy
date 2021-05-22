@@ -88,7 +88,7 @@ class Tweet(BaseModel):
 
 
 class UserPublicMetrics(BaseModel):
-    follower_count: int = None
+    followers_count: int = None
     following_count: int = None
     tweet_count: int = None
     listed_count: int = None
@@ -122,7 +122,7 @@ class User(BaseModel):
             pinned_tweet_id=self.pinned_tweet_id,
             profile_image_url=self.profile_image_url,
             protected=self.protected,
-            public_metrics_followers_count=self.public_metrics.follower_count,
+            public_metrics_followers_count=self.public_metrics.followers_count,
             public_metrics_following_count=self.public_metrics.following_count,
             public_metrics_tweet_count=self.public_metrics.tweet_count,
             public_metrics_listed_count=self.public_metrics.listed_count,
