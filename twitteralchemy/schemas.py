@@ -12,7 +12,7 @@ class ReferencedTweetType(Enum):
 
 
 class ReferencedTweet(BaseModel):
-    id: str
+    id: int
     type: ReferencedTweetType
 
     class Config:
@@ -37,12 +37,12 @@ class ReplySettings(Enum):
 
 
 class Tweet(BaseModel):
-    id: str
+    id: int
     text: Optional[str] = None
     created_at: Optional[datetime] = None
-    author_id: Optional[str] = None
-    conversation_id: Optional[str] = None
-    in_reply_to_user_id: Optional[str] = None
+    author_id: Optional[int] = None
+    conversation_id: Optional[int] = None
+    in_reply_to_user_id: Optional[int] = None
     referenced_tweets: Optional[List[ReferencedTweet]] = []
     public_metrics: Optional[TweetPublicMetrics] = TweetPublicMetrics()
     possibly_sensitive: Optional[bool] = None
@@ -98,7 +98,7 @@ class UserPublicMetrics(BaseModel):
 
 
 class User(BaseModel):
-    id: str
+    id: int
     name: str
     username: str
     created_at: Optional[datetime] = None
