@@ -85,6 +85,29 @@ class Tweet(BaseModel):
         ]
 
         return orm_tweet
+    
+    def to_dict(self) -> dict:
+        """
+        Map from the tweet schema object to a python dict object
+        """
+        dict_tweet = dict(
+            id=self.id,
+            text=self.text,
+            author_id=self.author_id,
+            conversation_id=self.conversation_id,
+            created_at=self.created_at,
+            in_reply_to_user_id=self.in_reply_to_user_id,
+            lang=self.lang,
+            public_metrics_retweet_count=self.public_metrics.retweet_count,
+            public_metrics_reply_count=self.public_metrics.reply_count,
+            public_metrics_like_count=self.public_metrics.like_count,
+            public_metrics_quote_count=self.public_metrics.quote_count,
+            possibly_sensitive=self.possibly_sensitive,
+            reply_settings=self.reply_settings,
+            source=self.source
+        )
+
+        return dict_tweet
 
 
 class UserPublicMetrics(BaseModel):
