@@ -154,3 +154,28 @@ class User(BaseModel):
         )
 
         return orm_user
+
+    def to_dict(self) -> dict:
+        """
+            Map from the User schema object to a python dict object
+        """
+
+        dict_user = dict(
+            id=self.id,
+            name=self.name,
+            username=self.username,
+            created_at=self.created_at,
+            description=self.description,
+            location=self.location,
+            pinned_tweet_id=self.pinned_tweet_id,
+            profile_image_url=self.profile_image_url,
+            protected=self.protected,
+            public_metrics_followers_count=self.public_metrics.followers_count,
+            public_metrics_following_count=self.public_metrics.following_count,
+            public_metrics_tweet_count=self.public_metrics.tweet_count,
+            public_metrics_listed_count=self.public_metrics.listed_count,
+            url=self.url,
+            verified=self.verified
+        )
+
+        return dict_user
