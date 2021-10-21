@@ -91,12 +91,12 @@ class Tweet(BaseModel):
         Map from the tweet schema object to a python dict object
         """
         dict_tweet = dict(
-            id=self.id,
+            id=str(self.id),
             text=self.text,
-            author_id=self.author_id,
-            conversation_id=self.conversation_id,
+            author_id=str(self.author_id),
+            conversation_id=str(self.conversation_id),
             created_at=self.created_at,
-            in_reply_to_user_id=self.in_reply_to_user_id,
+            in_reply_to_user_id=str(self.in_reply_to_user_id),
             lang=self.lang,
             public_metrics_retweet_count=self.public_metrics.retweet_count,
             public_metrics_reply_count=self.public_metrics.reply_count,
@@ -161,13 +161,13 @@ class User(BaseModel):
         """
 
         dict_user = dict(
-            id=self.id,
+            id=str(self.id),
             name=self.name,
             username=self.username,
             created_at=self.created_at,
             description=self.description,
             location=self.location,
-            pinned_tweet_id=self.pinned_tweet_id,
+            pinned_tweet_id=str(self.pinned_tweet_id),
             profile_image_url=self.profile_image_url,
             protected=self.protected,
             public_metrics_followers_count=self.public_metrics.followers_count,
