@@ -47,8 +47,8 @@ class User(BaseModel):
     pinned_tweet_id: Optional[int] = None
     profile_image_url: Optional[str] = None
 
-    entities: Optional[str] = None # Contents not automatically parsed
-    withheld: Optional[str] = None # Contents not parsed automatically
+    entities: Optional[dict] = None # Contents not automatically parsed
+    withheld: Optional[dict] = None # Contents not parsed automatically
 
     def to_orm(self) -> orm.User:
         orm_user = orm.User(
@@ -95,6 +95,18 @@ class User(BaseModel):
         )
 
         return dict_user
+
+    def to_full_dict(self) -> dict:
+        dict_buser = self.to_dict()
+
+        dict_fuser = dict(
+            entities = json.dumps(self.entities),
+            withheld = json.dumps(self.withheld)
+        )
+
+        dict_buser.update(dict_fuser)
+
+        return dict_buser
 
 
 # --- Tweet Schemas ---
@@ -227,60 +239,6 @@ class Tweet(BaseModel):
 
         return dict_btweet
 
-class Includes(BaseModel):
-    tweets: Optional[List[Tweet]] = None
-    users: Optional[List[User]] = None
-    places: Optional[List[str]] = None # Contents not parsed automatically
-    media: Optional[List[str]] = None # Contents not parsed automatically
-    polls: Optional[List[str]] = None # Contents not parsed automatically
-
-    class Config:
-        extra = 'forbid'
-
-class ParentTweet(Tweet):
-    """
-    Inherits from Tweet schema object to also hold the "includes" attribute if expansions
-        are identified in query
-    """
-    includes: Optional[Includes] = Includes()
-
-    def includes_to_dict(self) -> dict:
-        """
-        Map from includes attributes in tweet schema to a python dict
-        """
-        dict_includes = dict(
-            includes_tweets = self.includes.tweets,
-            includes_users = self.includes.users,
-            includes_places = self.includes.places,
-            includes_media = self.includes.media,
-            includes_polls = self.includes.polls
-        )
-
-        return dict_includes
-
-    def to_dict(self) -> dict:
-        """
-        Map from the tweet schema object to a python dict object, including possible expansions
-        """
-        dict_btweet = super().to_dict()
-        
-        dict_ptweet = self.includes_to_dict()
-
-        dict_btweet.update(dict_ptweet)
-        return dict_btweet
-
-    def to_full_dict(self) -> dict:
-        """
-        Map from the tweet schema object to a python dict object, including possible expansions
-            and additional attributes not in orm
-        """
-        dict_btweet = super().to_full_dict()
-        
-        dict_ptweet = self.includes_to_dict()
-
-        dict_btweet.update(dict_ptweet)
-        return dict_btweet
-
 
 # --- Media Schemas ---
 
@@ -314,9 +272,55 @@ class Media(BaseModel):
             height = self.height,
             width = self.width,
             preview_image_url = self.preview_image_url,
-            view_count = self.public_metrics.get('view_count', -1),
+            public_metrics = json.dumps(self.public_metrics),
             alt_text = self.alt_text
         )
 
         return dict_media
+
+    def to_full_dict(self) -> dict:
+        """
+        Placeholder for dividing information later, identical to to_dict method
+        """
+
+        return self.to_dict()
+
+
+# --- Includes Schema ---
+
+class Includes(BaseModel):
+    tweets: Optional[List[Tweet]] = None
+    users: Optional[List[User]] = None
+    places: Optional[List[dict]] = None # Contents not parsed automatically
+    media: Optional[List[Media]] = None
+    polls: Optional[List[dict]] = None # Contents not parsed automatically
+
+    def to_dict(self) -> dict:
+        """
+        Maps includes schema and all child object lists to python dictionaries
+        """
+        dict_inc = dict(
+            tweets = [tw.to_dict() for tw in self.tweets] if self.tweets else None,
+            users = [us.to_dict() for us in self.users] if self.users else None,
+            places = [json.dumps(pl) for pl in self.places] if self.places else None,
+            media = [md.to_dict() for md in self.media] if self.media else None,
+            polls = [json.dumps(po) for po in self.polls] if self.polls else None
+        )
+
+        return dict_inc
+
+    def to_full_dict(self) -> dict:
+        """
+        Map from the includes schema object and child objects to a python dict object, including additional 
+            attributes not in orm
+        """
+        dict_inc = dict(
+            tweets = [tw.to_full_dict() for tw in self.tweets] if self.tweets else None,
+            users = [us.to_full_dict() for us in self.users] if self.users else None,
+            places = [json.dumps(pl) for pl in self.places] if self.places else None,
+            media = [md.to_full_dict() for md in self.media] if self.media else None,
+            polls = [json.dumps(po) for po in self.polls] if self.polls else None
+        )
+
+        return dict_inc
 
