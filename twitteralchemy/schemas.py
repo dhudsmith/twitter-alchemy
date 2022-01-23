@@ -5,11 +5,12 @@ from enum import Enum
 import twitteralchemy.orm as orm
 
 
+# --- Referenced Tweet Schemas ---
+
 class ReferencedTweetType(Enum):
     RETWEETED = 'retweeted'
     QUOTED = 'quoted'
     REPLIED_TO = 'replied_to'
-
 
 class ReferencedTweet(BaseModel):
     id: int
@@ -20,6 +21,32 @@ class ReferencedTweet(BaseModel):
         extra = 'forbid'
 
 
+# --- Tweet Schemas ---
+
+class Coordinates(BaseModel):
+    # type: Optional[str] = None
+    coordinates = Optional[List[float]] # Length 2
+
+    class Config:
+        extra = 'forbid'
+
+class Geo(BaseModel):
+    coordinates: Optional[Coordinates] = None
+    place_id: Optional[str] = None
+
+    class Config:
+        extra = 'forbid'
+
+class Includes(BaseModel):
+    tweets: Optional[List[Tweet]] = None
+    users: Optional[List[User]] = None
+    places: Optional[List[str]] = None # Contents not parsed automatically
+    media: Optional[List[str]] = None # Contents not parsed automatically
+    polls: Optional[List[str]] = None # Contents not parsed automatically
+
+    class Config:
+        extra = 'forbid'
+
 class TweetPublicMetrics(BaseModel):
     retweet_count: int = None
     reply_count: int = None
@@ -29,12 +56,10 @@ class TweetPublicMetrics(BaseModel):
     class Config:
         extra = 'forbid'
 
-
 class ReplySettings(Enum):
     EVERYONE = 'everyone'
     MENTIONED_USERS = 'mentionedUsers'
     FOLLOWING = 'following'
-
 
 class Tweet(BaseModel):
     id: int
@@ -49,6 +74,15 @@ class Tweet(BaseModel):
     lang: Optional[str] = None
     reply_settings: Optional[ReplySettings] = None
     source: Optional[str] = None
+
+    # Extra attributes included in to_full_dict
+    attachments: Optional[str] # Contents not parsed automatically
+    geo: Optional[Geo] = Geo()
+    context_annotations: Optional[str] = None # Contents not parsed automatically
+    entities: Optional[str] = None # Contents not parsed automatically
+    withheld: Optional[str] = None # Contents not parsed automatically
+
+
 
     class Config:
         use_enum_values = True
@@ -85,7 +119,7 @@ class Tweet(BaseModel):
         ]
 
         return orm_tweet
-    
+
     def to_dict(self) -> dict:
         """
         Map from the tweet schema object to a python dict object
@@ -109,6 +143,69 @@ class Tweet(BaseModel):
 
         return dict_tweet
 
+    def to_full_dict(self) -> dict:
+        """
+        Map from the tweet schema object to a python dict object, including additional 
+            attributes not in orm
+        """
+        dict_btweet = self.to_dict()
+
+        dict_ftweet = dict(
+            attachments = self.attachments,
+            geo_place_id = self.geo.place_id,
+            geo_latitude = self.geo.coordinates.latitude,
+            geo_longitude = self.geo.coordinates.longitude,
+            context_annotations = self.context_annotations,
+            entities = self.entities,
+            withheld = self.withheld
+        )
+
+class ParentTweet(Tweet):
+    """
+    Inherits from Tweet schema object to also hold the "includes" attribute if expansions
+        are identified in query
+    """
+    includes: Optional[Includes] = None
+
+    def includes_to_dict(self) -> dict:
+        """
+        Map from includes attributes in tweet schema to a python dict
+        """
+        dict_includes = dict(
+            includes_tweets = self.includes.tweets,
+            includes_users = self.includes.users,
+            includes_places = self.includes.places,
+            includes_media = self.includes.media,
+            includes_polls = self.includes.polls
+        )
+
+        return dict_includes
+
+    def to_dict(self) -> dict:
+        """
+        Map from the tweet schema object to a python dict object, including possible expansions
+        """
+        dict_btweet = super().__init__().to_dict()
+        
+        dict_ptweet = dself.includes_to_dict()
+
+        dict_btweet.update(bdict_ptweet)
+        return dict_btweet
+
+    def to_full_dict(self) -> dict:
+        """
+        Map from the tweet schema object to a python dict object, including possible expansions
+            and additional attributes not in orm
+        """
+        dict_btweet = super().__init__().to_full_dict()
+        
+        dict_ptweet = dself.includes_to_dict()
+
+        dict_btweet.update(bdict_ptweet)
+        return dict_btweet
+
+
+# --- User Schemas ---
 
 class UserPublicMetrics(BaseModel):
     followers_count: int = None
@@ -118,7 +215,6 @@ class UserPublicMetrics(BaseModel):
 
     class Config:
         extra = 'forbid'
-
 
 class User(BaseModel):
     id: int
@@ -133,6 +229,9 @@ class User(BaseModel):
     public_metrics: Optional[UserPublicMetrics] = UserPublicMetrics()
     pinned_tweet_id: Optional[int] = None
     profile_image_url: Optional[str] = None
+
+    entities: Optional[str] = None # Contents not automatically parsed
+    withheld: Optional[str] = None # Contents not parsed automatically
 
     def to_orm(self) -> orm.User:
         orm_user = orm.User(
@@ -179,3 +278,40 @@ class User(BaseModel):
         )
 
         return dict_user
+
+
+# --- Media Schemas ---
+
+class MediaType(Enum):
+    ANIMATED_GIF = 'animated_gif'
+    PHOTO = 'photo'
+    VIDEO = 'video'
+
+class Media(BaseModel):
+    media_key: Optional[str] = None
+    type: Optional[MediaType] = None
+    duration_ms: Optional[int] = None
+    height: Optional[int] = None
+    width: Optional[int]
+    preview_image_url: Optional[str] = None
+    public_metrics: Optional[dict] = None
+    alt_text: Optional[str] = None
+
+    def to_dict(self) -> dict:
+        """
+        Map from the User schema object to a python dict object
+        """
+
+        dict_media = dict(
+            media_key = self.media_key,
+            type = self.type,
+            duration_ms = self.duration_ms,
+            height = self.height,
+            width = self.width,
+            preview_image_url = self.preview_image_url,
+            view_count = self.public_metrics.get('view_count', -1),
+            alt_text = self.alt_text
+        )
+
+        return dict_media
+
