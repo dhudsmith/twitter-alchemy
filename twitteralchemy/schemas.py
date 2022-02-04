@@ -327,7 +327,11 @@ class Poll(BaseModel):
             voting_status = self.voting_status
         )
 
-    def to_full_dict(self)
+    def to_full_dict(self):
+        """
+        Placeholder for dividing information later, identical to to_dict method
+        """
+        return self.to_dict()
 
 
 # --- Place Schemas ---
