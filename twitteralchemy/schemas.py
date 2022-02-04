@@ -307,7 +307,7 @@ class PollVotingStatus(Enum):
 
 class Poll(BaseModel):
     id: str
-    options: Optional[dict] = None
+    options: Optional[List[dict]] = None
     duration_minutes: Optional[int] = None
     end_datetime: Optional[str] = None
     voting_status: Optional[PollVotingStatus] = None
@@ -327,6 +327,8 @@ class Poll(BaseModel):
             end_datetime = self.end_datetime,
             voting_status = self.voting_status
         )
+
+        return dict_poll
 
     def to_full_dict(self):
         """
@@ -366,15 +368,23 @@ class Place(BaseModel):
             place_type = self.place_type
         )
 
+        return dict_place
+
+    def to_full_dict(self):
+        """
+        Placeholder for dividing information later, identical to to_dict method
+        """
+        return self.to_dict()
+
 
 # --- Includes Schema ---
 
 class Includes(BaseModel):
     tweets: Optional[List[Tweet]] = None
     users: Optional[List[User]] = None
-    places: Optional[List[Place]] = None # Contents not parsed automatically
+    places: Optional[List[Place]] = None
     media: Optional[List[Media]] = None
-    polls: Optional[List[Poll]] = None # Contents not parsed automatically
+    polls: Optional[List[Poll]] = None
 
     def to_dict(self) -> dict:
         """
@@ -398,9 +408,9 @@ class Includes(BaseModel):
         dict_inc = dict(
             tweets = [tw.to_full_dict() for tw in self.tweets] if self.tweets else None,
             users = [us.to_full_dict() for us in self.users] if self.users else None,
-            places = [pl.to_dict() for pl in self.places] if self.places else None,
+            places = [pl.to_full_dict() for pl in self.places] if self.places else None,
             media = [md.to_full_dict() for md in self.media] if self.media else None,
-            polls = [po.to_dict() for po in self.polls] if self.polls else None
+            polls = [po.to_full_dict() for po in self.polls] if self.polls else None
         )
 
         return dict_inc

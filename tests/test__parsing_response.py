@@ -2,8 +2,9 @@ import json
 from twitteralchemy import Tweet, Includes
 
 # load test tweet data
-with open("tweet.json", 'r') as f:
+with open("tests/tweet_w_includes.json", 'r') as f:
     response = json.load(f)
+
 tweets = response['data']
 includes = response['includes']
 

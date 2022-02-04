@@ -125,7 +125,7 @@
                             "end": 210,
                             "url": "https://t.co/Vxp4UKnuJ9",
                             "expanded_url": "https://twitterdevfeedback.uservoice.com/forums/921790-twitter-developer-labs",
-                            "display_url": "twitterdevfeedback.uservoice.com/forums/921790-…",
+                            "display_url": "twitterdevfeedback.uservoice.com/forums/921790-...",
                             "images": [
                                 {
                                     "url": "https://pbs.twimg.com/news_img/1261301555787108354/9yR4UVsa?format=png&name=orig",
@@ -241,12 +241,12 @@
                 "options": [
                     {
                         "position": 1,
-                        "label": "“C Sharp”",
+                        "label": "C Sharp",
                         "votes": 795
                     },
                     {
                         "position": 2,
-                        "label": "“C Hashtag”",
+                        "label": "C Hashtag",
                         "votes": 156
                     }
                 ],
