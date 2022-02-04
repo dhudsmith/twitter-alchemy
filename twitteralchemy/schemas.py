@@ -6,6 +6,18 @@ from enum import Enum
 import twitteralchemy.orm as orm
 
 
+# --- Abstract Base ---
+
+class TwitterAPIObject(BaseModel):
+
+    @abstractmethod
+    def to_dict(self) -> dict:
+        pass
+
+    @abstractmethod
+    def to_full_dict(self) -> dict:
+        pass
+
 # --- Referenced Tweet Schemas ---
 
 class ReferencedTweetType(Enum):
@@ -248,6 +260,7 @@ class MediaType(Enum):
     VIDEO = 'video'
 
 class Media(BaseModel):
+
     media_key: Optional[str] = None
     type: Optional[MediaType] = None
     duration_ms: Optional[int] = None
@@ -285,15 +298,78 @@ class Media(BaseModel):
 
         return self.to_dict()
 
+# --- Poll Schemas ---
+
+class PollVotingStatus(Enum):
+    OPEN = "open"
+    CLOSED = "closed"
+
+class Poll(BaseModel):
+    id: str
+    options: Optional[dict] = None
+    duration_minutes: Optional[int] = None
+    end_datetime: Optional[str] = None
+    voting_status: Optional[PollVotingStatus] = None
+
+    class Config:
+        use_enum_values = True
+
+    def to_dict(self):
+        """
+        Map from the Poll schema object to a python dict object
+        """
+
+        dict_poll = dict(
+            id = self.id,
+            options = json.dumps(self.options),
+            duration_minutes = self.duration_minutes,
+            end_datetime = self.end_datetime,
+            voting_status = self.voting_status
+        )
+
+    def to_full_dict(self)
+
+
+# --- Place Schemas ---
+
+class Place(BaseModel):
+    full_name: str
+    id: str
+    contained_within: List[str] = None
+    country: Optional[str] = None
+    country_code: Optional[str] = None
+    geo: Optional[dict] = None
+    name: Optional[str] = None
+    place_type: Optional[str] = None # TODO: get place types and create enum
+
+    class Config:
+        use_enum_values = True
+
+    def to_dict(self):
+        """
+        Map from the Place shema object to a python dict object
+        """
+
+        dict_place = dict(
+            full_name = self.full_name,
+            id = self.id,
+            contained_within = self.contained_within,
+            country = self.country,
+            country_code = self.country_code,
+            geo = json.dumps(self.geo),
+            name = self.name,
+            place_type = self.place_type
+        )
+
 
 # --- Includes Schema ---
 
 class Includes(BaseModel):
     tweets: Optional[List[Tweet]] = None
     users: Optional[List[User]] = None
-    places: Optional[List[dict]] = None # Contents not parsed automatically
+    places: Optional[List[Place]] = None # Contents not parsed automatically
     media: Optional[List[Media]] = None
-    polls: Optional[List[dict]] = None # Contents not parsed automatically
+    polls: Optional[List[Poll]] = None # Contents not parsed automatically
 
     def to_dict(self) -> dict:
         """
@@ -302,9 +378,9 @@ class Includes(BaseModel):
         dict_inc = dict(
             tweets = [tw.to_dict() for tw in self.tweets] if self.tweets else None,
             users = [us.to_dict() for us in self.users] if self.users else None,
-            places = [json.dumps(pl) for pl in self.places] if self.places else None,
+            places = [pl.to_dict() for pl in self.places] if self.places else None,
             media = [md.to_dict() for md in self.media] if self.media else None,
-            polls = [json.dumps(po) for po in self.polls] if self.polls else None
+            polls = [po.to_dict() for po in self.polls] if self.polls else None
         )
 
         return dict_inc
@@ -317,9 +393,9 @@ class Includes(BaseModel):
         dict_inc = dict(
             tweets = [tw.to_full_dict() for tw in self.tweets] if self.tweets else None,
             users = [us.to_full_dict() for us in self.users] if self.users else None,
-            places = [json.dumps(pl) for pl in self.places] if self.places else None,
+            places = [pl.to_dict() for pl in self.places] if self.places else None,
             media = [md.to_full_dict() for md in self.media] if self.media else None,
-            polls = [json.dumps(po) for po in self.polls] if self.polls else None
+            polls = [po.to_dict() for po in self.polls] if self.polls else None
         )
 
         return dict_inc

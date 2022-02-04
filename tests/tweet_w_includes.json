@@ -212,6 +212,47 @@
             "url": "https://t.co/3ZX3TNiZCY",
             "protected": false
           }
+        ],
+        "places": [
+            {
+                "geo": {
+                    "type": "Feature",
+                    "bbox": [
+                        -74.026675,
+                        40.683935,
+                        -73.910408,
+                        40.877483
+                    ],
+                    "properties": {}
+                },
+                "country_code": "US",
+                "name": "Manhattan",
+                "id": "01a9a39529b27f36",
+                "place_type": "city",
+                "country": "United States",
+                "full_name": "Manhattan, NY"
+            }
+        ],
+        "polls": [
+            {
+                "id": "1199786642468413448",
+                "voting_status": "closed",
+                "duration_minutes": 1440,
+                "options": [
+                    {
+                        "position": 1,
+                        "label": "“C Sharp”",
+                        "votes": 795
+                    },
+                    {
+                        "position": 2,
+                        "label": "“C Hashtag”",
+                        "votes": 156
+                    }
+                ],
+                "end_datetime": "2019-11-28T20:26:41.000Z"
+            }
         ]
+
     }
 }
