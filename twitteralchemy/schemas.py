@@ -11,11 +11,11 @@ import twitteralchemy.orm as orm
 
 class TwitterAPIObject(BaseModel):
 
-    @abstractmethod
+    @abc.abstractmethod
     def to_dict(self) -> dict:
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def to_full_dict(self) -> dict:
         pass
 
