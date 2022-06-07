@@ -264,6 +264,7 @@ class Media(BaseModel):
 
     media_key: Optional[str] = None
     type: Optional[MediaType] = None
+    url: Optional[str] = None
     duration_ms: Optional[int] = None
     height: Optional[int] = None
     width: Optional[int]
@@ -282,6 +283,7 @@ class Media(BaseModel):
         dict_media = dict(
             media_key = self.media_key,
             type = self.type,
+            url = self.url,
             duration_ms = self.duration_ms,
             height = self.height,
             width = self.width,
