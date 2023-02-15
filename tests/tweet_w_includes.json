@@ -35,7 +35,8 @@
                 "retweet_count": 8,
                 "reply_count": 2,
                 "like_count": 40,
-                "quote_count": 1
+                "quote_count": 1,
+                "impression_count": 34
             },
             "lang": "en",
             "created_at": "2019-12-31T19:26:16.000Z",
@@ -203,10 +204,10 @@
             "pinned_tweet_id": "1293593516040269825",
             "username": "TwitterDev",
             "public_metrics": {
-              "followers_count": 513962,
-              "following_count": 2039,
-              "tweet_count": 3635,
-              "listed_count": 1672
+                "followers_count": 513962,
+                "tweet_count": 3635,
+                "listed_count": 1672,
+                "impression_count": 52
             },
             "name": "Twitter Dev",
             "url": "https://t.co/3ZX3TNiZCY",

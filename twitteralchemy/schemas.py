@@ -19,12 +19,13 @@ class TwitterAPIObject(BaseModel):
     def to_full_dict(self) -> dict:
         pass
 
-# --- Referenced Tweet Schemas ---
 
+# --- Referenced Tweet Schemas ---
 class ReferencedTweetType(Enum):
     RETWEETED = 'retweeted'
     QUOTED = 'quoted'
     REPLIED_TO = 'replied_to'
+
 
 class ReferencedTweet(BaseModel):
     id: int
@@ -43,8 +44,6 @@ class UserPublicMetrics(BaseModel):
     tweet_count: int = None
     listed_count: int = None
 
-    class Config:
-        extra = 'forbid'
 
 class User(BaseModel):
     id: int
@@ -60,8 +59,8 @@ class User(BaseModel):
     pinned_tweet_id: Optional[int] = None
     profile_image_url: Optional[str] = None
 
-    entities: Optional[dict] = None # Contents not automatically parsed
-    withheld: Optional[dict] = None # Contents not parsed automatically
+    entities: Optional[dict] = None  # Contents not automatically parsed
+    withheld: Optional[dict] = None  # Contents not parsed automatically
 
     def to_orm(self) -> orm.User:
         orm_user = orm.User(
@@ -113,8 +112,8 @@ class User(BaseModel):
         dict_buser = self.to_dict()
 
         dict_fuser = dict(
-            entities = json.dumps(self.entities),
-            withheld = json.dumps(self.withheld)
+            entities=json.dumps(self.entities),
+            withheld=json.dumps(self.withheld)
         )
 
         dict_buser.update(dict_fuser)
@@ -126,10 +125,11 @@ class User(BaseModel):
 
 class Coordinates(BaseModel):
     # type: Optional[str] = None
-    coordinates: Optional[str] = None # Length 2
+    coordinates: Optional[str] = None  # Length 2
 
     class Config:
         extra = 'forbid'
+
 
 class Geo(BaseModel):
     coordinates: Optional[Coordinates] = Coordinates()
@@ -138,19 +138,20 @@ class Geo(BaseModel):
     class Config:
         extra = 'forbid'
 
+
 class TweetPublicMetrics(BaseModel):
     retweet_count: int = None
     reply_count: int = None
     like_count: int = None
     quote_count: int = None
+    impression_count: int = None
 
-    class Config:
-        extra = 'forbid'
 
 class ReplySettings(Enum):
     EVERYONE = 'everyone'
     MENTIONED_USERS = 'mentionedUsers'
     FOLLOWING = 'following'
+
 
 class Tweet(BaseModel):
     id: int
@@ -167,11 +168,11 @@ class Tweet(BaseModel):
     source: Optional[str] = None
 
     # Extra attributes included in to_full_dict
-    attachments: Optional[dict] # Contents not parsed automatically
+    attachments: Optional[dict]  # Contents not parsed automatically
     geo: Optional[Geo] = Geo()
-    context_annotations: Optional[dict] = None # Contents not parsed automatically
-    entities: Optional[dict] = None # Contents not parsed automatically
-    withheld: Optional[dict] = None # Contents not parsed automatically
+    context_annotations: Optional[dict] = None  # Contents not parsed automatically
+    entities: Optional[dict] = None  # Contents not parsed automatically
+    withheld: Optional[dict] = None  # Contents not parsed automatically
 
     class Config:
         use_enum_values = True
@@ -193,6 +194,7 @@ class Tweet(BaseModel):
             public_metrics_reply_count=self.public_metrics.reply_count,
             public_metrics_like_count=self.public_metrics.like_count,
             public_metrics_quote_count=self.public_metrics.quote_count,
+            public_metrics_impression_count=self.public_metrics.impression_count,
             possibly_sensitive=self.possibly_sensitive,
             reply_settings=self.reply_settings,
             source=self.source
@@ -225,6 +227,7 @@ class Tweet(BaseModel):
             public_metrics_reply_count=self.public_metrics.reply_count,
             public_metrics_like_count=self.public_metrics.like_count,
             public_metrics_quote_count=self.public_metrics.quote_count,
+            public_metrics_impression_count=self.public_metrics.impression_count,
             possibly_sensitive=self.possibly_sensitive,
             reply_settings=self.reply_settings,
             source=self.source
@@ -240,12 +243,12 @@ class Tweet(BaseModel):
         dict_btweet = self.to_dict()
 
         dict_ftweet = dict(
-            attachments = json.dumps(self.attachments),
-            geo_place_id = self.geo.place_id,
-            geo_coordinates = self.geo.coordinates.coordinates,
-            context_annotations = json.dumps(self.context_annotations),
-            entities = json.dumps(self.entities),
-            withheld = json.dumps(self.withheld)
+            attachments=json.dumps(self.attachments),
+            geo_place_id=self.geo.place_id,
+            geo_coordinates=self.geo.coordinates.coordinates,
+            context_annotations=json.dumps(self.context_annotations),
+            entities=json.dumps(self.entities),
+            withheld=json.dumps(self.withheld)
         )
 
         dict_btweet.update(dict_ftweet)
@@ -260,8 +263,8 @@ class MediaType(Enum):
     PHOTO = 'photo'
     VIDEO = 'video'
 
-class Media(BaseModel):
 
+class Media(BaseModel):
     media_key: Optional[str] = None
     type: Optional[MediaType] = None
     url: Optional[str] = None
@@ -281,15 +284,15 @@ class Media(BaseModel):
         """
 
         dict_media = dict(
-            media_key = self.media_key,
-            type = self.type,
-            url = self.url,
-            duration_ms = self.duration_ms,
-            height = self.height,
-            width = self.width,
-            preview_image_url = self.preview_image_url,
-            public_metrics = json.dumps(self.public_metrics),
-            alt_text = self.alt_text
+            media_key=self.media_key,
+            type=self.type,
+            url=self.url,
+            duration_ms=self.duration_ms,
+            height=self.height,
+            width=self.width,
+            preview_image_url=self.preview_image_url,
+            public_metrics=json.dumps(self.public_metrics),
+            alt_text=self.alt_text
         )
 
         return dict_media
@@ -301,11 +304,13 @@ class Media(BaseModel):
 
         return self.to_dict()
 
+
 # --- Poll Schemas ---
 
 class PollVotingStatus(Enum):
     OPEN = "open"
     CLOSED = "closed"
+
 
 class Poll(BaseModel):
     id: str
@@ -323,11 +328,11 @@ class Poll(BaseModel):
         """
 
         dict_poll = dict(
-            id = self.id,
-            options = json.dumps(self.options),
-            duration_minutes = self.duration_minutes,
-            end_datetime = self.end_datetime,
-            voting_status = self.voting_status
+            id=self.id,
+            options=json.dumps(self.options),
+            duration_minutes=self.duration_minutes,
+            end_datetime=self.end_datetime,
+            voting_status=self.voting_status
         )
 
         return dict_poll
@@ -349,7 +354,7 @@ class Place(BaseModel):
     country_code: Optional[str] = None
     geo: Optional[dict] = None
     name: Optional[str] = None
-    place_type: Optional[str] = None # TODO: get place types and create enum
+    place_type: Optional[str] = None  # TODO: get place types and create enum
 
     class Config:
         use_enum_values = True
@@ -360,14 +365,14 @@ class Place(BaseModel):
         """
 
         dict_place = dict(
-            full_name = self.full_name,
-            id = self.id,
-            contained_within = self.contained_within,
-            country = self.country,
-            country_code = self.country_code,
-            geo = json.dumps(self.geo),
-            name = self.name,
-            place_type = self.place_type
+            full_name=self.full_name,
+            id=self.id,
+            contained_within=self.contained_within,
+            country=self.country,
+            country_code=self.country_code,
+            geo=json.dumps(self.geo),
+            name=self.name,
+            place_type=self.place_type
         )
 
         return dict_place
@@ -393,11 +398,11 @@ class Includes(BaseModel):
         Maps includes schema and all child object lists to python dictionaries
         """
         dict_inc = dict(
-            tweets = [tw.to_dict() for tw in self.tweets] if self.tweets else None,
-            users = [us.to_dict() for us in self.users] if self.users else None,
-            places = [pl.to_dict() for pl in self.places] if self.places else None,
-            media = [md.to_dict() for md in self.media] if self.media else None,
-            polls = [po.to_dict() for po in self.polls] if self.polls else None
+            tweets=[tw.to_dict() for tw in self.tweets] if self.tweets else None,
+            users=[us.to_dict() for us in self.users] if self.users else None,
+            places=[pl.to_dict() for pl in self.places] if self.places else None,
+            media=[md.to_dict() for md in self.media] if self.media else None,
+            polls=[po.to_dict() for po in self.polls] if self.polls else None
         )
 
         return dict_inc
@@ -408,12 +413,11 @@ class Includes(BaseModel):
             attributes not in orm
         """
         dict_inc = dict(
-            tweets = [tw.to_full_dict() for tw in self.tweets] if self.tweets else None,
-            users = [us.to_full_dict() for us in self.users] if self.users else None,
-            places = [pl.to_full_dict() for pl in self.places] if self.places else None,
-            media = [md.to_full_dict() for md in self.media] if self.media else None,
-            polls = [po.to_full_dict() for po in self.polls] if self.polls else None
+            tweets=[tw.to_full_dict() for tw in self.tweets] if self.tweets else None,
+            users=[us.to_full_dict() for us in self.users] if self.users else None,
+            places=[pl.to_full_dict() for pl in self.places] if self.places else None,
+            media=[md.to_full_dict() for md in self.media] if self.media else None,
+            polls=[po.to_full_dict() for po in self.polls] if self.polls else None
         )
 
         return dict_inc
-
