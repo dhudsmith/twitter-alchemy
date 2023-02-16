@@ -18,6 +18,7 @@ class Tweet(Base):
     public_metrics_reply_count = Column(Integer)
     public_metrics_like_count = Column(Integer)
     public_metrics_quote_count = Column(Integer)
+    public_metrics_impression_count = Column(Integer)
     possibly_sensitive = Column(Boolean)
     reply_settings = Column(Text)
     source = Column(Text)
